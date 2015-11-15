@@ -1,8 +1,8 @@
 #############################################################################
-# Library Makefile for building: lin_alg
+# Library Makefile for building: stegr
 # Frédéric Simard, 2014
 #############################################################################
-LIBBASENAME = lin_algebra_lib
+LIBBASENAME = stegr
 MAJVER = 1
 MINVER = 0
 PATCHVER = 0
@@ -24,12 +24,12 @@ CFLAGS        := -Wall -fPIC $(CFLAGS)
 CXXFLAGS      := -Wall -fPIC $(CXXFLAGS)
 LEXFLAGS      := 
 YACCFLAGS     := -d
-INCPATH       := -I$(STAGING_DIR)/include -I$(STAGING_DIR)/usr/include -I./includes/
-#INCPATH       := -I. -I/include/ -I/usr/include/ -I./includes/
+INCPATH       := -I$(STAGING_DIR)/include -I$(STAGING_DIR)/usr/include -I../includes/
+#INCPATH       := -I. -I/include/ -I/usr/include/ -I../includes
 LINK          := $(CC) 
 LFLAGS        := -shared -Wl,-soname,$(TARGET)
-LIBS          :=-L$(STAGING_DIR)/lib -L$(STAGING_DIR)/usr/lib -L./f2clib -L./stegr -lm -lrt -lstegr -lf2clib
-#LIBS	      := -L/lib/ -L/usr/lib -L./stegr -L./f2clib -lm -lrt
+LIBS          :=-L$(STAGING_DIR)/lib -L$(STAGING_DIR)/usr/lib -L../f2clib -lm -lrt -lf2clib
+#LIBS	      := -L/lib/ -L/usr/lib -lm -lrt
 AR            := ar
 AR_ARGS	      := cqs	
 RANLIB        := 
@@ -53,11 +53,18 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = linear_algebra.c
-		
-OBJECTS       = linear_algebra.o
+ALLSRCS = ieeeck.c ilaenv.c lsame.c scopy.c sisnan.c slae2.c slaebz.c \
+        slaev2.c slaisnan.c slamch.c slaneg.c slanst.c slar1v.c slarnv.c \
+        slarra.c slarrb.c slarrc.c slarrd.c slarre.c slarrf.c slarrj.c \
+        slarrk.c slarrr.c slarrv.c slaruv.c slaset.c slasq2.c slasq3.c \
+        slasq5.c slasq6.c slasrt.c slassq.c sscal.c sstegr.c sstemr.c \
+        sswap.c iparmq.c slasq4.c xerbla.c
 
-first: all
+SOURCES       = $(ALLSRCS)
+
+OBJECTS       = $(ALLSRCS:.c=.o)
+
+first: all $(OBJECTS)
 ####### Implicit rules
 
 .SUFFIXES: .c .o .cpp .cc .cxx .C
@@ -79,10 +86,8 @@ first: all
 
 ####### Build rules
 
-all: dependencies Makefile  $(TARGET) 
+all: Makefile  $(TARGET) 
 #$(TARGETA)
-
-	@echo "\nBuilding Target------------------------------------\n"
 
 $(TARGET):  $(UICDECLS) $(OBJECTS) $(SUBLIBS) $(OBJCOMP)  
 	-$(DEL_FILE) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)
@@ -106,21 +111,14 @@ clean:
 
 ####### Sub-libraries
 
-distclean: clean
-	-$(DEL_FILE) $(TARGET) 
-	-$(DEL_FILE) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGETA)
+#distclean: clean
+#	-$(DEL_FILE) $(TARGET) 
+#	-$(DEL_FILE) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGETA)
 
 ####### Compile
 
-linear_algebra.o: linear_algebra.c 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o linear_algebra.o linear_algebra.c
-
-####### dependencies
-
-dependencies: 
-	@echo "\nBuilding Dependecies------------------------------------\n"
-	cd f2clib; make
-	cd stegr; make
+#linear_algebra.o: linear_algebra.c 
+#	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o linear_algebra.o linear_algebra.c
 
 ####### Install
 
